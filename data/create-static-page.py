@@ -27,6 +27,7 @@ def persist(output_dir, endpoint):
 
     return response
 
+
 def extract_zip_from_url(url: str, to: Path) -> None:
     with requests.get(url, stream=True) as req:
         with zipfile.ZipFile(io.BytesIO(req.content)) as zip_ref:
@@ -45,8 +46,12 @@ def main(output_dir: Path):
     tasks = persist(output_dir, "/api/task-list")['context']['task_list']
     for task in tqdm(tasks, 'Persist tasks'):
         task_id = task["task_id"]
-        datasets = persist(output_dir, f'/api/datasets_by_task/{task_id}')
+
         persist(output_dir, f'/api/task/{task_id}')
+        datasets = persist(output_dir, f'/api/datasets_by_task/{task_id}')['context']['datasets']
+
+        for dataset in json.loads(datasets).keys():
+            persist(output_dir, f'/api/evaluations/{task_id}/{dataset}')
         
 
 if __name__ == '__main__':
