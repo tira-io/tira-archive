@@ -1,0 +1,44 @@
+name: CI
+on:
+  push:
+    branches:
+    - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued. But do not cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy-sashboard:
+    name: "Deploy data.tira.io to GitHub Pages"
+    environment:
+      name: GitHub Pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4     
+      - name: 🧰 Setup GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: 🧰 Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: 🧰 Install Python dependencies
+        run: python -m pip install pyyaml~=6.0
+      - name: 🏗️ Build the web app
+        run: data/create-static-page.py data/dist
+      - name: 📤 Upload web app artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: data/dist/
+      - name: 🚀 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
