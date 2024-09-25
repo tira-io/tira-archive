@@ -7,6 +7,7 @@ import requests
 import zipfile
 import io
 import json
+import shutil
 
 
 def persist(output_dir, endpoint):
@@ -35,6 +36,8 @@ def main(output_dir: Path):
     print(output_dir)
 
     extract_zip_from_url('https://github.com/tira-io/tira/releases/latest/download/frontend-build.zip', output_dir)
+    shutil.copyfile(output_dir / "index.html", output_dir / "404.html")
+
     tasks = persist(output_dir, "/api/task-list")['context']['task_list']
     for task in tqdm(tasks, 'Persist tasks'):
         datasets = persist(output_dir, f'/api/datasets_by_task/{task["task_id"]}')
