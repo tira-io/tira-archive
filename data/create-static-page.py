@@ -22,11 +22,13 @@ Data api for <a href="https://tira.io">TIRA.io</a> (currently in alpha).
 def persist(output_dir, endpoint):
     tira = Client()
     out = output_dir / Path(endpoint[1:])
-    out.mkdir(exist_ok=True, parents=True)
+    if endpoint.endswith('/'):
+        out = out / 'index.json'
+    out.parent.mkdir(exist_ok=True, parents=True)
 
     response = tira.json_response(endpoint)
 
-    with open(out / 'index.json', 'w') as f:
+    with open(out, 'w') as f:
         f.write(json.dumps(response))
 
     return response
