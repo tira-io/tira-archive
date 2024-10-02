@@ -1,1 +1,3 @@
 # tira-data
+
+ToDo: Describe DNS setup etc...
