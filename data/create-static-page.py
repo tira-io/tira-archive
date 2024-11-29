@@ -52,7 +52,7 @@ def main(output_dir: Path):
     for task in tqdm(tasks, 'Persist tasks'):
         task_id = task["task_id"]
 
-        persist(output_dir, f'/api/task/{task_id}')
+        persist(output_dir, f'/api/task/{task_id}/')
         datasets = persist(output_dir, f'/api/datasets_by_task/{task_id}')['context']['datasets']
         persist(output_dir, f"/api/task/{task_id}/public-submissions")
         
