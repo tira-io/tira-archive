@@ -49,7 +49,7 @@ def main(output_dir: Path):
     persist(output_dir, "/v1/datasets/all", force_refresh=True)
     persist(output_dir, "/v1/systems/all", force_refresh=True)
     tasks = persist(output_dir, "/api/task-list", force_refresh=True)['context']['task_list']
-    for task in tqdm(tasks, 'Persist tasks'):
+    for task in tqdm(tasks, "Persist tasks"):
         task_id = task["task_id"]
 
         persist(output_dir, f'/api/task/{task_id}/')
