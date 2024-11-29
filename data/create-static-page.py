@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-import click
-from pathlib import Path
-from tira.rest_api_client import Client
-from tqdm import tqdm
-import requests
-import zipfile
 import io
 import json
 import shutil
+import zipfile
+from pathlib import Path
+
+import click
+import requests
+from tira.rest_api_client import Client
+from tqdm import tqdm
 
 
 def persist(output_dir, endpoint):
@@ -39,17 +40,22 @@ def extract_zip_from_url(url: str, to: Path) -> None:
 def main(output_dir: Path):
     print(output_dir)
 
-    extract_zip_from_url('https://github.com/tira-io/tira/releases/latest/download/frontend-build.zip', output_dir)
+    extract_zip_from_url('https://github.com/tira-io/tira/releases/download/0.0.136-pt_artifacts-0.0.7/frontend-build.zip', output_dir)
     shutil.copyfile(output_dir / "index.html", output_dir / "404.html")
 
     persist(output_dir, "/api/role")
+    persist(output_dir, "/info")
+    persist(output_dir, "/.well-known/tira/client")
+    persist(output_dir, "/v1/datasets/all")
+    persist(output_dir, "/v1/systems/all")
     tasks = persist(output_dir, "/api/task-list")['context']['task_list']
     for task in tqdm(tasks, 'Persist tasks'):
         task_id = task["task_id"]
 
         persist(output_dir, f'/api/task/{task_id}')
         datasets = persist(output_dir, f'/api/datasets_by_task/{task_id}')['context']['datasets']
-
+        persist(output_dir, f"/api/task/{task_id}/public-submissions")
+        
         for dataset in json.loads(datasets).keys():
             persist(output_dir, f'/api/evaluations/{task_id}/{dataset}')
         
