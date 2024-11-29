@@ -11,13 +11,13 @@ from tira.rest_api_client import Client
 from tqdm import tqdm
 
 
-def persist(output_dir, endpoint):
+def persist(output_dir, endpoint, force_refresh=False):
     out = output_dir / Path(endpoint[1:])
     if endpoint.endswith('/'):
         out = out / 'index.json'
     out.parent.mkdir(exist_ok=True, parents=True)
 
-    if out.exists():
+    if out.exists() and not force_refresh:
         return json.load(open(out, 'r'))
 
     tira = Client()
@@ -44,11 +44,11 @@ def main(output_dir: Path):
     shutil.copyfile(output_dir / "index.html", output_dir / "404.html")
 
     persist(output_dir, "/api/role")
-    persist(output_dir, "/info")
-    persist(output_dir, "/.well-known/tira/client")
-    persist(output_dir, "/v1/datasets/all")
-    persist(output_dir, "/v1/systems/all")
-    tasks = persist(output_dir, "/api/task-list")['context']['task_list']
+    persist(output_dir, "/info", force_refresh=True)
+    persist(output_dir, "/.well-known/tira/client", force_refresh=True)
+    persist(output_dir, "/v1/datasets/all", force_refresh=True)
+    persist(output_dir, "/v1/systems/all", force_refresh=True)
+    tasks = persist(output_dir, "/api/task-list", force_refresh=True)['context']['task_list']
     for task in tqdm(tasks, 'Persist tasks'):
         task_id = task["task_id"]
 
