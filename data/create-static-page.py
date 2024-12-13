@@ -40,14 +40,24 @@ def extract_zip_from_url(url: str, to: Path) -> None:
 def main(output_dir: Path):
     print(output_dir)
 
-    extract_zip_from_url('https://github.com/tira-io/tira/releases/download/0.0.136-pt_artifacts-0.0.38/frontend-build.zip', output_dir)
+    extract_zip_from_url('https://github.com/tira-io/tira/releases/download/0.0.136-pt_artifacts-0.0.44/frontend-build.zip', output_dir)
     shutil.copyfile(output_dir / "index.html", output_dir / "404.html")
 
     persist(output_dir, "/api/role")
     persist(output_dir, "/info", force_refresh=True)
     persist(output_dir, "/.well-known/tira/client", force_refresh=True)
     persist(output_dir, "/v1/datasets/all", force_refresh=True)
-    persist(output_dir, "/v1/systems/all", force_refresh=True)
+    systems = persist(output_dir, "/v1/systems/all", force_refresh=True)
+
+    SYSTEMS_TO_SAVE = set(['ir-benchmarks'])
+    systems_to_load = []
+    for system in systems:
+        if system['type'] == 'Docker' and any(i in SYSTEMS_TO_SAVE for i in system['tasks']):
+            systems_to_load.append(f'/v1/systems/{system["team"]}/{system["name"]}')
+
+    for system in tqdm(systems_to_load):
+        persist(output_dir, system)
+
     tasks = persist(output_dir, "/api/task-list", force_refresh=True)['context']['task_list']
     for task in tqdm(tasks, "Persist tasks"):
         task_id = task["task_id"]
@@ -58,7 +68,7 @@ def main(output_dir: Path):
         
         for dataset in json.loads(datasets).keys():
             persist(output_dir, f'/api/evaluations/{task_id}/{dataset}')
-        
+
 
 if __name__ == '__main__':
     main()
