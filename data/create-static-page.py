@@ -52,7 +52,7 @@ def main(output_dir: Path):
     SYSTEMS_TO_SAVE = set(['ir-benchmarks'])
     systems_to_load = []
     for system in systems:
-        if system['type'] == 'Docker' and any(i in SYSTEMS_TO_SAVE for i in system['tasks']) and ('tira-ir-starter' in system["name"] or 'qpptk' in system["name"] or 'ows' in system["name"]):
+        if system['type'] == 'Docker' and any(i in SYSTEMS_TO_SAVE for i in system['tasks']) and ('tira-ir-starter' in system["name"] or 'qpptk' in system["name"] or 'ows' in system["name"] or 'fschlatt' in system["name"]):
             systems_to_load.append(f'/v1/systems/{system["team"]}/{system["name"]}')
 
     for system in tqdm(systems_to_load):
