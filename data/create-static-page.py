@@ -40,7 +40,7 @@ def extract_zip_from_url(url: str, to: Path) -> None:
 def main(output_dir: Path):
     print(output_dir)
 
-    extract_zip_from_url('https://github.com/tira-io/tira/releases/download/0.0.137-ui35/frontend-build.zip', output_dir)
+    extract_zip_from_url('https://github.com/tira-io/tira/releases/download/0.0.138-t28/frontend-build.zip', output_dir)
     shutil.copyfile(output_dir / "index.html", output_dir / "404.html")
 
     persist(output_dir, "/api/role")
