@@ -1,6 +1,9 @@
 name: Run TIRA Health Checks
 
 on:
+  schedule:
+    - cron: '0 6,20 * * *'
+
   workflow_dispatch: {}
 
 permissions:
