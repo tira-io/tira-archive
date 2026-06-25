@@ -28,7 +28,7 @@ jobs:
 
       - name: Install TIRA Client
         run: |
-          pip3 install 'git+https://github.com/tira-io/tira.git@rag4reports#subdirectory=python-client'
+          pip3 install 'git+https://github.com/tira-io/tira.git@main#subdirectory=python-client'
           pip3 install click
 
       - name: Run Health
